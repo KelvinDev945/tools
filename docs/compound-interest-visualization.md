@@ -218,15 +218,31 @@ permalink: /compound-interest-visualization/
         const ctx = document.getElementById('compoundChart').getContext('2d');
 
         // Generate data points from t=0 to t=n
-        // x-axis: t/n (normalized time from 0 to 1)
-        // y-axis: (1 + 1/n)^t (compound interest value at time t)
+        // x-axis: i/n where i=0, 1, ..., n (normalized time from 0 to 1)
+        // y-axis: (1 + 1/n)^i (compound interest value at time i)
         const dataPoints = [];
         const rate = 1 / n; // Interest rate per period
 
-        // Generate points for each time step
-        for (let t = 0; t <= n; t++) {
-            const x = t / n; // Normalized time (0 to 1)
-            const y = Math.pow(1 + rate, t); // Compound interest value
+        // For performance: limit points to max 500, but always include start and end
+        const maxPoints = 500;
+        let step = 1;
+
+        if (n + 1 > maxPoints) {
+            // Calculate step to sample approximately maxPoints
+            step = Math.ceil(n / (maxPoints - 1));
+        }
+
+        // Generate points: i=0, step, 2*step, ..., n
+        for (let i = 0; i <= n; i += step) {
+            const x = i / n; // Normalized time (0 to 1)
+            const y = Math.pow(1 + rate, i); // Compound interest value
+            dataPoints.push({ x, y });
+        }
+
+        // Always ensure the final point (1, (1+1/n)^n) is included
+        if (dataPoints[dataPoints.length - 1].x !== 1) {
+            const x = 1;
+            const y = Math.pow(1 + rate, n);
             dataPoints.push({ x, y });
         }
 
@@ -287,10 +303,12 @@ permalink: /compound-interest-visualization/
                                     label += ': ';
                                 }
                                 if (context.datasetIndex === 0) {
-                                    const t = Math.round(context.parsed.x * n);
-                                    label += context.parsed.y.toFixed(5) + ' (t=' + t + ')';
+                                    const x = context.parsed.x;
+                                    const y = context.parsed.y;
+                                    const t = Math.round(x * n);
+                                    label += 'x=' + x.toFixed(3) + ', y=' + y.toFixed(5) + ' (period ' + t + ')';
                                 } else {
-                                    label += context.parsed.y.toFixed(5);
+                                    label += 'x=' + context.parsed.x.toFixed(3) + ', y=' + context.parsed.y.toFixed(5);
                                 }
                                 return label;
                             }
