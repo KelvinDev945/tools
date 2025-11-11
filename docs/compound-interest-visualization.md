@@ -303,10 +303,12 @@ permalink: /compound-interest-visualization/
                                     label += ': ';
                                 }
                                 if (context.datasetIndex === 0) {
-                                    const t = Math.round(context.parsed.x * n);
-                                    label += context.parsed.y.toFixed(5) + ' (t=' + t + ')';
+                                    const x = context.parsed.x;
+                                    const y = context.parsed.y;
+                                    const t = Math.round(x * n);
+                                    label += 'x=' + x.toFixed(3) + ', y=' + y.toFixed(5) + ' (period ' + t + ')';
                                 } else {
-                                    label += context.parsed.y.toFixed(5);
+                                    label += 'x=' + context.parsed.x.toFixed(3) + ', y=' + context.parsed.y.toFixed(5);
                                 }
                                 return label;
                             }
