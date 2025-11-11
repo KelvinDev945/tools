@@ -214,27 +214,20 @@ permalink: /compound-interest-visualization/
     }
 
     // Create or update chart
-    function updateChart(maxN) {
+    function updateChart(n) {
         const ctx = document.getElementById('compoundChart').getContext('2d');
 
-        // Generate data points
+        // Generate data points from t=0 to t=n
+        // x-axis: t/n (normalized time from 0 to 1)
+        // y-axis: (1 + 1/n)^t (compound interest value at time t)
         const dataPoints = [];
-        const numPoints = Math.min(maxN, 100); // Limit to 100 points for performance
-        const step = Math.max(1, Math.floor(maxN / numPoints));
+        const rate = 1 / n; // Interest rate per period
 
-        for (let n = 1; n <= maxN; n += step) {
-            dataPoints.push({
-                x: n,
-                y: calculateCompoundInterest(n)
-            });
-        }
-
-        // Always include the current n value
-        if (maxN > 1 && dataPoints[dataPoints.length - 1].x !== maxN) {
-            dataPoints.push({
-                x: maxN,
-                y: calculateCompoundInterest(maxN)
-            });
+        // Generate points for each time step
+        for (let t = 0; t <= n; t++) {
+            const x = t / n; // Normalized time (0 to 1)
+            const y = Math.pow(1 + rate, t); // Compound interest value
+            dataPoints.push({ x, y });
         }
 
         // Destroy old chart if exists
@@ -248,25 +241,25 @@ permalink: /compound-interest-visualization/
             data: {
                 datasets: [
                     {
-                        label: '(1 + 1/n)^n',
+                        label: 'Compound Growth (1 + 1/n)^t',
                         data: dataPoints,
                         borderColor: '#3498db',
                         backgroundColor: 'rgba(52, 152, 219, 0.1)',
                         borderWidth: 2,
-                        pointRadius: 1,
+                        pointRadius: Math.min(3, 200 / n), // Smaller points for larger n
                         pointHoverRadius: 5,
-                        tension: 0.4
+                        tension: 0.1
                     },
                     {
-                        label: 'e (Euler\'s number)',
-                        data: [{x: 1, y: E}, {x: maxN, y: E}],
+                        label: 'e (Continuous Compounding)',
+                        data: [{x: 1, y: E}],
                         borderColor: '#e74c3c',
                         backgroundColor: '#e74c3c',
-                        borderWidth: 2,
-                        borderDash: [5, 5],
-                        pointRadius: 5,
-                        pointHoverRadius: 7,
-                        pointStyle: 'circle'
+                        borderWidth: 0,
+                        pointRadius: 8,
+                        pointHoverRadius: 10,
+                        pointStyle: 'circle',
+                        showLine: false
                     }
                 ]
             },
@@ -276,7 +269,7 @@ permalink: /compound-interest-visualization/
                 plugins: {
                     title: {
                         display: true,
-                        text: 'Compound Interest Formula Approaching e',
+                        text: 'Compound Interest Growth Over Time (n = ' + n + ' periods)',
                         font: {
                             size: 16,
                             weight: 'bold'
@@ -293,11 +286,11 @@ permalink: /compound-interest-visualization/
                                 if (label) {
                                     label += ': ';
                                 }
-                                if (context.parsed.y !== null) {
+                                if (context.datasetIndex === 0) {
+                                    const t = Math.round(context.parsed.x * n);
+                                    label += context.parsed.y.toFixed(5) + ' (t=' + t + ')';
+                                } else {
                                     label += context.parsed.y.toFixed(5);
-                                }
-                                if (context.parsed.x !== null && context.datasetIndex === 0) {
-                                    label += ' (n=' + Math.round(context.parsed.x) + ')';
                                 }
                                 return label;
                             }
@@ -309,23 +302,27 @@ permalink: /compound-interest-visualization/
                         type: 'linear',
                         title: {
                             display: true,
-                            text: 'n (number of compounding periods)',
+                            text: 'Time (normalized, 0 to 1)',
                             font: {
                                 size: 14
                             }
                         },
-                        min: 1
+                        min: 0,
+                        max: 1,
+                        ticks: {
+                            stepSize: 0.1
+                        }
                     },
                     y: {
                         title: {
                             display: true,
-                            text: 'Result',
+                            text: 'Investment Value',
                             font: {
                                 size: 14
                             }
                         },
-                        min: 1.5,
-                        max: Math.max(3, calculateCompoundInterest(maxN) + 0.2)
+                        min: 0.9,
+                        max: Math.max(2.9, E + 0.2)
                     }
                 },
                 interaction: {
