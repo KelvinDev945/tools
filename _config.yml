@@ -1,0 +1,31 @@
+# Site settings
+title: Tools & Resources
+description: A searchable collection of tools, documentation, and resources
+baseurl: "" # the subpath of your site, e.g. /blog
+url: "" # the base hostname & protocol for your site
+
+# Build settings
+markdown: kramdown
+permalink: pretty
+
+# Collections
+collections:
+  pages:
+    output: true
+    permalink: /:name
+
+# Exclude from processing
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor/bundle/
+  - vendor/cache/
+  - vendor/gems/
+  - vendor/ruby/
+  - .claude/
+
+# Plugins
+plugins:
+  - jekyll-seo-tag
+  - jekyll-sitemap
