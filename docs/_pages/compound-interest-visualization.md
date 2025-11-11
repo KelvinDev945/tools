@@ -3,6 +3,7 @@ layout: page
 title: Compound Interest Formula Visualization
 description: Interactive visualization showing how (1 + 1/n)^n approaches e as n increases
 tags: [mathematics, visualization, interactive, calculus]
+permalink: /compound-interest-visualization/
 ---
 
 <style>
