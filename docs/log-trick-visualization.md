@@ -19,6 +19,8 @@ tags: [algorithms, visualization, interactive, bitwise, optimization, log-trick]
 
 由于整数的二进制表示有限（最多 32 位），每个元素最多只能"增大"32 次，因此内层循环的总执行次数是 **O(n log U)**，其中 U 是数组中的最大值。
 
+**循环终止条件：** 当右侧的 `x` 无法提供新信息时，即 `x` 是 `a[j]` 子集时，循环终止。因为 `a[j]` 已经是更左侧元素的子集了，继续循环过去也不会有变化，所以提前终止内循环。
+
 <div class="visualization-container">
   <div class="algorithm-explanation">
     <h3>算法步骤</h3>
@@ -48,12 +50,6 @@ tags: [algorithms, visualization, interactive, bitwise, optimization, log-trick]
       <input type="number" id="k-input" placeholder="例如: 3">
       <button id="load-custom" class="btn btn-primary">加载自定义数据</button>
     </div>
-  </div>
-
-  <div class="control-buttons">
-    <button id="prev-btn" class="btn" disabled>◀ 上一步</button>
-    <button id="next-btn" class="btn" disabled>▶ 下一步</button>
-    <button id="reset-btn" class="btn">↻ 重置</button>
   </div>
 
   <div class="status-message" id="status-message"></div>
@@ -107,6 +103,12 @@ tags: [algorithms, visualization, interactive, bitwise, optimization, log-trick]
     <div class="array-state-display">
       <h4>当前数组状态</h4>
       <div id="current-array" class="array-container"></div>
+    </div>
+
+    <div class="control-buttons">
+      <button id="prev-btn" class="btn" disabled>◀ 上一步</button>
+      <button id="next-btn" class="btn" disabled>▶ 下一步</button>
+      <button id="reset-btn" class="btn">↻ 重置</button>
     </div>
 
     <div class="step-history">
